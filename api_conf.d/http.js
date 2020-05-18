@@ -17,9 +17,14 @@ function introspectAccessToken(r) {
                         r.log("OAuth token value " + p + ": " + response[p]);
                         r.headersOut['token-' + p] = response[p];
                     }
-                    r.status = 204;
-                    r.sendHeader();
-                    r.finish();
+                    if (r.variables.current_scope == "ADMIN" && response.user.role != "ADMIN") {
+                        r.warn("Forbidden");
+                        r.return(403);
+                    } else {
+                        r.status = 204;
+                        r.sendHeader();
+                        r.finish();
+                    }
                 } else {
                     r.warn("OAuth token introspection found inactive token");
                     r.return(401);

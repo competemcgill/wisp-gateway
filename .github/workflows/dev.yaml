@@ -55,8 +55,15 @@ jobs:
         docker push $DOCKER_ORGANIZATION/$IMAGE
       env:
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    
+    # Install helm for use in pipeline
+    - name: Install helm
+      run: |
+        wget -q -O get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+        chmod 700 get_helm.sh
+        ./get_helm.sh
 
     # Deploy the Docker image to the GKE cluster
     - name: Deploy
       run: |-
-        kubectl -n dev set image deploy/$IMAGE $IMAGE=$DOCKER_ORGANIZATION/$IMAGE:dev-$(echo ${GITHUB_SHA} | cut -c1-8)
+        helm upgrade --atomic --install dev-gateway ./chart/wisp-gateway/ --namespace dev --set image.tag=dev-$(echo ${GITHUB_SHA} | cut -c1-8) --set service.loadBalancerIP=34.95.10.234

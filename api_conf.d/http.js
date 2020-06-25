@@ -1,6 +1,6 @@
 function introspectAccessToken(r) {
     r.log("OAuth sending introspection request with token: " + r.variables.access_token)
-    r.subrequest("/_oauth2_send_introspection_request", "token=" + r.variables.access_token,
+    r.subrequest("/_oauth2_send_introspection_request", "token=" + r.variables.access_token + "&uri=" + encodeURIComponent(r.variables.request_uri) + "&method=" + r.variables.request_method,
         function (reply) {
             if (reply.status != 200) {
                 r.error("OAuth unexpected response from authorization server (HTTP " + reply.status + "). " + reply.body);

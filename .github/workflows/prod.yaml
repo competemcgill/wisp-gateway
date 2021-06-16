@@ -13,6 +13,7 @@ env:
   DOCKER_ORGANIZATION: ${{ secrets.DOCKER_ORGANIZATION }}
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
+  LOAD_BALANCER_IP: ${{ secrets.PROD_LOAD_BALANCER_IP }}
   GKE_ZONE: northamerica-northeast1-c
   IMAGE: wisp-gateway
 
@@ -66,4 +67,4 @@ jobs:
       # Deploy to GKE cluster using helm
       - name: Deploy
         run: |-
-          helm upgrade --atomic --install prod-gateway ./chart/wisp-gateway/ --namespace prod --set image.tag=$(echo ${GITHUB_SHA} | cut -c1-8) --set replicaCount=2 --set service.loadBalancerIP=35.203.108.72
+          helm upgrade --atomic --install prod-gateway ./chart/wisp-gateway/ --namespace prod --set image.tag=$(echo ${GITHUB_SHA} | cut -c1-8) --set replicaCount=2 --set service.loadBalancerIP=${LOAD_BALANCER_IP}

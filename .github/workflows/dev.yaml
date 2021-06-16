@@ -9,9 +9,10 @@ on:
 env:
   GITHUB_SHA: ${{ github.sha }}
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  DOCKER_ORGANIZATION: ${{ secrets.DOCKER_ORGANIZATION }} 
+  DOCKER_ORGANIZATION: ${{ secrets.DOCKER_ORGANIZATION }}
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  GKE_CLUSTER: wisp-prod
+  GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
+  LOAD_BALANCER_IP: ${{ secrets.DEV_LOAD_BALANCER_IP }}
   GKE_ZONE: northamerica-northeast1-c
   IMAGE: wisp-gateway
 
@@ -65,4 +66,4 @@ jobs:
       # Deploy the Docker image to the GKE cluster
       - name: Deploy
         run: |-
-          helm upgrade --atomic --install dev-gateway ./chart/wisp-gateway/ --namespace dev --set image.tag=dev-$(echo ${GITHUB_SHA} | cut -c1-8) --set service.loadBalancerIP=34.95.10.234
+          helm upgrade --atomic --install dev-gateway ./chart/wisp-gateway/ --namespace dev --set image.tag=dev-$(echo ${GITHUB_SHA} | cut -c1-8) --set service.loadBalancerIP=${LOAD_BALANCER_IP}
